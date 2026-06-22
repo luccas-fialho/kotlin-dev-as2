@@ -10,10 +10,8 @@ class ExerciseRepository(
         return exerciseDao.listExercises()
     }
 
-    suspend fun addExercise(name: String, reps: Int, weight: Int) {
-        exerciseDao.addExercise(
-            Exercise(exerciseName = name, reps = reps, weight = weight)
-        )
+    suspend fun addExercise(exercise: Exercise) {
+        exerciseDao.addExercise(exercise)
     }
 
     suspend fun removeExercise(exercise: Exercise) {

@@ -18,8 +18,8 @@ fun AppNavigation() {
     ) {
         composable("list") {
             ExerciseListScreen(
-                exerciseViewModel,
-                onNewExercise = {
+                exerciseViewModel = exerciseViewModel,
+                onNavigateToRegistration = {
                     navController.navigate("registration")
                 },
                 onUpdateExercise = { id ->

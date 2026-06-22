@@ -32,9 +32,9 @@ class ExerciseViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun addExercise(name: String, reps: Int, weight: Int) {
+    fun addExercise(exercise: Exercise) {
         viewModelScope.launch {
-            repository.addExercise(name, reps, weight)
+            repository.addExercise(exercise)
         }
     }
 
@@ -44,9 +44,9 @@ class ExerciseViewModel(application: Application): AndroidViewModel(application)
         }
     }
 
-    fun updateExercise(id: Int, newExercise: Exercise) {
+    fun updateExercise(exercise: Exercise) {
         viewModelScope.launch {
-            repository.updateExercise(newExercise)
+            repository.updateExercise(exercise)
         }
     }
 
