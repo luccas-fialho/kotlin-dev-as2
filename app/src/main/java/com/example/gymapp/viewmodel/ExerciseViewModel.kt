@@ -1,37 +1,52 @@
 package com.example.gymapp.viewmodel
 
+import android.app.Application
 import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.gymapp.model.Exercise
+import com.example.gymapp.model.room.AppDatabase
+import com.example.gymapp.model.room.ExerciseRepository
+import kotlinx.coroutines.launch
 
-class ExerciseViewModel: ViewModel() {
+class ExerciseViewModel(application: Application): AndroidViewModel(application) {
 
-    private var nextId = 4
+    private val repository: ExerciseRepository
 
-    var exercises = mutableStateListOf(
-        Exercise(1, "Lat Pulldown", 12, 120),
-        Exercise(2, "Bench Press", 10, 60),
-        Exercise(3, "Squat", 8, 80),
-    )
+    var exercises = mutableStateListOf<Exercise>()
         private set
 
-    fun addExercise(name: String, reps: Int, weight: Int) {
-        exercises.add(
-            Exercise(nextId, name, reps, weight)
-        )
+    init {
+        val dao = AppDatabase.getDatabase(application).exerciseDao()
+        repository = ExerciseRepository(dao)
+        loadExercises()
+    }
 
-        nextId++
+    private fun loadExercises() {
+        viewModelScope.launch {
+            repository.listExercises().collect { list ->
+                exercises.clear()
+                exercises.addAll(list)
+            }
+        }
+    }
+
+    fun addExercise(name: String, reps: Int, weight: Int) {
+        viewModelScope.launch {
+            repository.addExercise(name, reps, weight)
+        }
     }
 
     fun removeExercise(exercise: Exercise) {
-        exercises.remove(exercise)
+        viewModelScope.launch {
+            repository.removeExercise(exercise)
+        }
     }
 
     fun updateExercise(id: Int, newExercise: Exercise) {
-        val index = exercises.indexOfFirst { it.id == id }
-
-        if (index != -1) {
-            exercises[index] = newExercise
+        viewModelScope.launch {
+            repository.updateExercise(newExercise)
         }
     }
 
